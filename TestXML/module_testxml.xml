@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_testxml" default="compile.module.testxml">
+  <dirname property="module.testxml.basedir" file="${ant.file.module_testxml}"/>
+  
+  <property name="module.jdk.home.testxml" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.testxml" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.testxml" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.testxml" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="testxml.output.dir" value="${module.testxml.basedir}/target/classes"/>
+  <property name="testxml.testoutput.dir" value="${module.testxml.basedir}/target/test-classes"/>
+  
+  <path id="testxml.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="testxml.module.production.classpath">
+    <path refid="${module.jdk.classpath.testxml}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+  </path>
+  
+  <path id="testxml.runtime.production.module.classpath">
+    <pathelement location="${testxml.output.dir}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+  </path>
+  
+  <path id="testxml.module.classpath">
+    <path refid="${module.jdk.classpath.testxml}"/>
+    <pathelement location="${testxml.output.dir}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+  </path>
+  
+  <path id="testxml.runtime.module.classpath">
+    <pathelement location="${testxml.testoutput.dir}"/>
+    <pathelement location="${testxml.output.dir}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.testxml">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.testxml">
+    <patternset refid="excluded.from.module.testxml"/>
+  </patternset>
+  
+  <path id="testxml.module.sourcepath">
+    <dirset dir="${module.testxml.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="testxml.module.test.sourcepath">
+    <dirset dir="${module.testxml.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.testxml" depends="compile.module.testxml.production,compile.module.testxml.tests" description="Compile module TestXML"/>
+  
+  <target name="compile.module.testxml.production" depends="register.custom.compilers" description="Compile module TestXML; production classes">
+    <mkdir dir="${testxml.output.dir}"/>
+    <javac2 destdir="${testxml.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.testxml}/javac">
+      <compilerarg line="${compiler.args.testxml}"/>
+      <bootclasspath refid="testxml.module.bootclasspath"/>
+      <classpath refid="testxml.module.production.classpath"/>
+      <src refid="testxml.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.testxml"/>
+    </javac2>
+    
+    <copy todir="${testxml.output.dir}">
+      <fileset dir="${module.testxml.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.testxml.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.testxml.tests" depends="register.custom.compilers,compile.module.testxml.production" description="compile module TestXML; test classes" unless="skip.tests">
+    <mkdir dir="${testxml.testoutput.dir}"/>
+    <javac2 destdir="${testxml.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.testxml}/javac">
+      <compilerarg line="${compiler.args.testxml}"/>
+      <bootclasspath refid="testxml.module.bootclasspath"/>
+      <classpath refid="testxml.module.classpath"/>
+      <src refid="testxml.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.testxml"/>
+    </javac2>
+    
+    <copy todir="${testxml.testoutput.dir}">
+      <fileset dir="${module.testxml.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.testxml" description="cleanup module">
+    <delete dir="${testxml.output.dir}"/>
+    <delete dir="${testxml.testoutput.dir}"/>
+  </target>
+</project>

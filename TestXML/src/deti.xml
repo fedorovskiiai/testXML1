@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+                <employee name="Maksim" child ="2" />
+                <employee name="Ivan" child ="4" />
+                <employee name="Franklin" child ="1" />
+                <employee name="Herald" child ="1" />
+                <employee name="Adam" child ="3" />
+                <employee name="Leroy" child ="1" />
+
+</root>
